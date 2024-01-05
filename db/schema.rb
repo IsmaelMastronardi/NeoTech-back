@@ -25,7 +25,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_01_05_190413) do
   end
 
   create_table "carts", force: :cascade do |t|
-    t.decimal "total_price"
+    t.float "total_price", default: 0.0
     t.bigint "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -41,10 +41,10 @@ ActiveRecord::Schema[7.1].define(version: 2024_01_05_190413) do
   create_table "items", force: :cascade do |t|
     t.string "name"
     t.text "description"
-    t.decimal "price"
+    t.float "price"
     t.string "image"
     t.integer "quantity"
-    t.bigint "category_id", null: false
+    t.bigint "category_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["category_id"], name: "index_items_on_category_id"
