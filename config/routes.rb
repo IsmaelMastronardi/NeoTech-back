@@ -1,4 +1,8 @@
 Rails.application.routes.draw do
+  resources :cart_icons
+  resources :items
+  resources :categories
+  resources :carts
   resources :users
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
