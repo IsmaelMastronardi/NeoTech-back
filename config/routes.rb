@@ -1,10 +1,14 @@
 Rails.application.routes.draw do
-  resources :cart_items
-  resources :cart_icons
-  resources :items
-  resources :categories
-  resources :carts
-  resources :users
+  # resources :cart_items
+  namespace :api do
+    namespace :v1 do
+      resources :items, only: [:index, :show]
+      resources :categories, only: [:index,  :show]
+      resources :users, only: [:index, :create, :delete] do
+        resources :carts
+      end
+    end
+  end
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
