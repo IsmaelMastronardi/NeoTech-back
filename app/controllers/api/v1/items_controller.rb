@@ -38,6 +38,12 @@ class Api::V1::ItemsController < ApplicationController
     @item.destroy!
   end
 
+  def recentlyAdded
+    @items = Item.last(10)
+
+    render json: @items
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_item
