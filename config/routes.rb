@@ -2,9 +2,8 @@ Rails.application.routes.draw do
   # resources :cart_items
   namespace :api do
     namespace :v1 do
-      resources :items, only: [:index, :show]
       resources :categories, only: [:index,  :show]
-      resources :users, only: [:index, :create, :delete] do
+      resources :users, only: [:show, :create, :delete] do
         resources :carts
       end
     end
