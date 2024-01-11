@@ -2,6 +2,7 @@ Rails.application.routes.draw do
   # resources :cart_items
   namespace :api do
     namespace :v1 do
+      resources :users, only: [:show]
       resources :categories, only: [:index,  :show]
       resources :items do
         collection do
