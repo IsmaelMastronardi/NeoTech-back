@@ -25,6 +25,7 @@ end
     price: Faker::Commerce.price(range: 50.0..1000.0),
     image: 'not available',
     quantity: rand(1..10),
-    category: Category.all.sample
+    category: Category.all.sample,
+    image: 'https://images.unsplash.com/photo-1624701928517-44c8ac49d93c?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
   )
 end
