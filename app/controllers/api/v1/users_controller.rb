@@ -15,10 +15,8 @@ class Api::V1::UsersController < ApplicationController
 
   def create
     @user = User.new(user_params)
-    @user.build_cart 
-  
     if @user.save
-      render json: @user, status: :created, location: api_v1_user_url(@user)
+      render json: [@user, @user.cart], status: :created, location: api_v1_user_url(@user)
     else
       render json: @user.errors, status: :unprocessable_entity
     end
