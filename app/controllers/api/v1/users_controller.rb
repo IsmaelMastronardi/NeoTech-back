@@ -10,7 +10,7 @@ class Api::V1::UsersController < ApplicationController
 
   # GET /users/1
   def show
-    render json: [@user, @user.cart]
+    render json: [@user, @user.cart , @user.cart.items]
   end
 
   def create
