@@ -10,13 +10,22 @@ class Api::V1::UsersController < ApplicationController
 
   # GET /users/1
   def show
-    render json: [@user, @user.cart , @user.cart.items]
+    render json: [@user, @user.order , @user.order.items]
   end
 
   def create
     @user = User.new(user_params)
     if @user.save
-      render json: [@user, @user.cart], status: :created, location: api_v1_user_url(@user)
+      render json: [@user, @user.order, @user.order.items], status: :created, location: api_v1_user_url(@user)
+    else
+      render json: @user.errors, status: :unprocessable_entity
+    end
+  end
+
+  def create_temporary_user
+    @user = User.create(name: 'Guest')
+    if @user.save
+      render json: [@user, @user.order, @user.order.items], status: :created, location: api_v1_user_url(@user)
     else
       render json: @user.errors, status: :unprocessable_entity
     end
@@ -44,6 +53,6 @@ class Api::V1::UsersController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def user_params
-      params.require(:user).permit(:name, :email, :password)
+      params.require(:user).permit(:name)
     end
 end
