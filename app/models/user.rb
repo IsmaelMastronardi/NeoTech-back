@@ -1,15 +1,13 @@
 class User < ApplicationRecord
-  has_one :cart
+  has_one :order
 
-  after_create :create_cart
+  after_create :create_order
 
   validates :name, presence: :true
-  validates :email, presence: :true
-  validates :password, presence: :true
 
   private
   
-  def create_cart
-    Cart.create(user: self)
+  def create_order
+    Order.create(user: self)
   end
 end
