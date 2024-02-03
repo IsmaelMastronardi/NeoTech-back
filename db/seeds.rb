@@ -1,4 +1,4 @@
-Cart.destroy_all
+Order.destroy_all
 User.destroy_all
 
 Item.destroy_all
@@ -7,8 +7,6 @@ Category.destroy_all
 5.times do
   User.create(
     name: Faker::Name.name,
-    email: Faker::Internet.email,
-    password: 'password'
   )
 end
 
