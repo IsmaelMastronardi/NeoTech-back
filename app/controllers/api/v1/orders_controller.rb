@@ -38,6 +38,24 @@ class Api::V1::OrdersController < ApplicationController
     @order.destroy!
   end
 
+  def fill_and_complte_order
+    @user = User.find(params[:user_id])
+    if !@user.current_order 
+      @order  = user.create_order
+    end
+    @order = user.current_order
+
+    @order.items << Item.find(params[:item_id])
+    @order.calculate_total_price
+    @order.complete_order
+
+    if @order.save
+      render json: @user.past_orders, status: :ok
+    else
+      render json: @order.errors, status: :unprocessable_entity 
+    end
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_order
@@ -46,6 +64,6 @@ class Api::V1::OrdersController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def order_params
-      params.require(:order).permit(:total_price)
+      params.require(:order).permit(:user_id, :completed, :total_price, :items, :order_items)
     end
 end
