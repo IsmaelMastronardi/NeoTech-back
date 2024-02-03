@@ -8,14 +8,19 @@ class Order < ApplicationRecord
 
   validates :total_price, presence: true
 
-  private
+  def calculate_total_price
+    total_price = 0.0
+  
+    @order_items = self.order_items.includes(:item)
+  
+    @order_items.each do |order_item|
+      total_price += order_item.quantity * order_item.item.price
+    end
+  
+    self.total_price = total_price
+  end
 
   def complete_order
     update(completed: true)
   end
-
-  def calculate_total_price
-    self.total_price = items.sum(:price)
-  end
-
 end
