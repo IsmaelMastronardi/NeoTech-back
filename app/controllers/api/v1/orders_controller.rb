@@ -38,21 +38,26 @@ class Api::V1::OrdersController < ApplicationController
     @order.destroy!
   end
 
-  def fill_and_complte_order
+  def fill_and_complete_order
     @user = User.find(params[:user_id])
-    if !@user.current_order 
-      @order  = user.create_order
-    end
-    @order = user.current_order
-
-    @order.items << Item.find(params[:item_id])
-    @order.calculate_total_price
-    @order.complete_order
-
-    if @order.save
-      render json: @user.past_orders, status: :ok
-    else
-      render json: @order.errors, status: :unprocessable_entity 
+    @order = @user.current_order || @user.create_order
+  
+    ActiveRecord::Base.transaction do
+      params[:order].each do |item_name, item_details|
+        item_id = item_details["item"]["id"]
+        @order.items << Item.find(item_id)
+        order_item = @order.order_items.last
+        order_item.update(quantity: item_details["quantity"])
+      end
+  
+      @order.calculate_total_price
+      @order.complete_order
+  
+      if @order.save
+        render json: [@order, @user.past_orders], status: :ok
+      else
+        render json: @order.errors, status: :unprocessable_entity
+      end
     end
   end
 
