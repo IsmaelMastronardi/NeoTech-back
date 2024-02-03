@@ -5,8 +5,6 @@ class User < ApplicationRecord
   after_create :create_order
 
   validates :name, presence: :true
-
-  private
   
   def create_order
     Order.create(user: self)
