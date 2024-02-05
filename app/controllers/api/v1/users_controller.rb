@@ -14,7 +14,6 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def show_past_orders
-    puts 'aaaaaaaaaaaaaaaaaaaaa'
     past_orders = @user.past_orders.includes(order_items: :item)
     render json: past_orders.to_json(include: { order_items: { include: :item } })
   end
