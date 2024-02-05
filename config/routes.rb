@@ -2,6 +2,9 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       resources :users, only: [:show] do
+        member do
+          get :show_past_orders
+        end
         collection do
           post :create_temporary_user
         end
