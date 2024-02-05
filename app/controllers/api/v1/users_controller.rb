@@ -1,5 +1,5 @@
 class Api::V1::UsersController < ApplicationController
-  before_action :set_user, only: %i[ show update destroy ]
+  before_action :set_user, only: %i[ show update destroy show_past_orders]
 
   # GET /users
   def index
@@ -10,7 +10,13 @@ class Api::V1::UsersController < ApplicationController
 
   # GET /users/1
   def show
-    render json: [@user, @user.current_order , @user.current_order.items]
+    render json: [@user]
+  end
+
+  def show_past_orders
+    puts 'aaaaaaaaaaaaaaaaaaaaa'
+    past_orders = @user.past_orders.includes(order_items: :item)
+    render json: past_orders.to_json(include: { order_items: { include: :item } })
   end
 
   def create
