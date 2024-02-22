@@ -1,3 +1,4 @@
+OrderItem.destroy_all
 Order.destroy_all
 User.destroy_all
 
@@ -10,7 +11,7 @@ Category.destroy_all
   )
 end
 
-categories = ['Processors', 'Motherboards', 'Graphics Cards', 'Memory', 'Storage', 'Power Supplies', 'Cases', 'Cooling']
+categories = ['Notebooks', 'Desktop', 'Processors', 'Motherboards', 'Graphics Cards', 'Memory', 'Storage', 'Power Supplies', 'Cases', 'Cooling', 'Accessories']
 
 categories.each do |category_name|
   Category.create(name: category_name)
@@ -20,10 +21,14 @@ end
 20.times do
   Item.create(
     name: Faker::Commerce.product_name,
-    description: Faker::Lorem.sentence,
+    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
+    Phasellus malesuada dui a magna porta, faucibus sagittis odio scelerisque. 
+    Phasellus tincidunt enim quis erat tincidunt porta. 
+    Nullam sit amet quam rutrum nibh lobortis gravida quis mollis nisl. 
+    Nulla ante dolor, suscipit ut tortor nec, interdum dictum turpis',
     price: Faker::Commerce.price(range: 50.0..1000.0),
     quantity: rand(1..10),
     category: Category.all.sample,
-    image: 'https://images.unsplash.com/photo-1624701928517-44c8ac49d93c?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+    image: 'https://i.ibb.co/FWN1SZg/pc2.png'
   )
 end
