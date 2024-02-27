@@ -10,12 +10,12 @@ class Order < ApplicationRecord
 
   def calculate_total_price
     total_price = 0.0
-  
-    @order_items = self.order_items.includes(:item)
+
+    @order_items = order_items.includes(:item)
     @order_items.each do |order_item|
       total_price += order_item.quantity * order_item.item.price
     end
-  
+
     self.total_price = total_price
   end
 

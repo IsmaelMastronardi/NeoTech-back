@@ -1,5 +1,5 @@
 class Api::V1::UsersController < ApplicationController
-  before_action :set_user, only: %i[ show update destroy show_past_orders]
+  before_action :set_user, only: %i[show update destroy show_past_orders]
 
   # GET /users
   def index
@@ -21,7 +21,8 @@ class Api::V1::UsersController < ApplicationController
   def create
     @user = User.new(user_params)
     if @user.save
-      render json: [@user, @user.current_order, @user.current_order.items], status: :created, location: api_v1_user_url(@user)
+      render json: [@user, @user.current_order, @user.current_order.items], status: :created,
+             location: api_v1_user_url(@user)
     else
       render json: @user.errors, status: :unprocessable_entity
     end
@@ -51,13 +52,14 @@ class Api::V1::UsersController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_user
-      @user = User.find(params[:id])
-    end
 
-    # Only allow a list of trusted parameters through.
-    def user_params
-      params.require(:user).permit(:name)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_user
+    @user = User.find(params[:id])
+  end
+
+  # Only allow a list of trusted parameters through.
+  def user_params
+    params.require(:user).permit(:name)
+  end
 end
