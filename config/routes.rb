@@ -21,7 +21,7 @@ Rails.application.routes.draw do
       resources :categories, only: [:index, :show]
       resources :items do
         collection do
-          get :recently_Added
+          get :recently_added
         end
       end
     end
