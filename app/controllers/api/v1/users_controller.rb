@@ -10,7 +10,7 @@ class Api::V1::UsersController < ApplicationController
 
   # GET /users/1
   def show
-    render json: [@user]
+    render json: @user
   end
 
   def show_past_orders
@@ -30,7 +30,7 @@ class Api::V1::UsersController < ApplicationController
   def create_temporary_user
     @user = User.create(name: 'Guest')
     if @user.save
-      render json: [@user, @user.current_order, @user.current_order.items], status: :created, location: api_v1_user_url(@user)
+      render json: @user, status: :created, location: api_v1_user_url(@user)
     else
       render json: @user.errors, status: :unprocessable_entity
     end

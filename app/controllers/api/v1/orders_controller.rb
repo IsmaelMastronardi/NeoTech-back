@@ -1,5 +1,6 @@
 class Api::V1::OrdersController < ApplicationController
-  before_action :set_order, only: %i[ show update destroy ]
+  before_action :set_order, only: %i[ update destroy ]
+  before_action :set_user, only: %i[ show ]
 
   # GET /orders
   def index
@@ -10,7 +11,15 @@ class Api::V1::OrdersController < ApplicationController
 
   # GET /orders/1
   def show
+    @order = @user.current_order
     render json: @order
+  end
+
+  def show_current_order
+    @user = User.find(params[:user_id])
+    @order = @user.current_order || @user.create_order
+    @order.save
+    render json: @order, include: { order_items: { include: :item } }
   end
 
   # POST /orders
@@ -38,37 +47,131 @@ class Api::V1::OrdersController < ApplicationController
     @order.destroy!
   end
 
-  def fill_and_complete_order
+  def add_item
     @user = User.find(params[:user_id])
-    @order = @user.current_order || @user.create_order
   
     ActiveRecord::Base.transaction do
-      params[:order].each do |item_name, item_details|
-        item_id = item_details["item"]["id"]
-        @order.items << Item.find(item_id)
-        order_item = @order.order_items.last
-        order_item.update(quantity: item_details["quantity"])
-      end
+      @order = @user.current_order || @user.create_order
+      @item = Item.find(order_item_params[:item_id])
+      @order_item = @order.order_items.find_by(item_id: @item.id)
   
-      @order.calculate_total_price
-      @order.complete_order
-  
-      if @order.save
-        render json: [@order, @user.past_orders], status: :ok
+      if @order_item.nil?
+        @order_item = @order.order_items.new(item: @item, quantity: 1)
       else
-        render json: @order.errors, status: :unprocessable_entity
+        @order_item.update(quantity: @order_item.quantity + 1)
+      end
+      @order.save
+      @order.calculate_total_price
+      @order.save
+
+  
+      if @order_item.save
+        render json: @order_item, status: :created
+      else
+        render json: @order_item.errors, status: :unprocessable_entity
+        raise ActiveRecord::Rollback
       end
     end
   end
 
+  def remove_one_item
+    @user = User.find(params[:user_id])
+    @order = @user.current_order
+    ActiveRecord::Base.transaction do
+      if @order.nil?
+        render json: { error: 'No active order found' }, status: :unprocessable_entity
+        return
+      end
+  
+      @order_item = @order.order_items.find_by(item_id: order_item_params[:item_id])
+      if @order_item.nil?
+        render json: { error: 'Item not found in the order' }, status: :unprocessable_entity
+        return
+      end
+
+      if @order_item.quantity > 1
+        @order_item.update(quantity: @order_item.quantity - 1)
+      else
+        @order_item.destroy
+      end
+  
+      @order.calculate_total_price
+      @order.save
+  
+      unless @order_item.destroyed?
+        if @order_item.save
+          render json: @order_item, status: :ok
+        else
+          render json: @order_item.errors, status: :unprocessable_entity
+          raise ActiveRecord::Rollback
+        end
+      else
+        render json: { message: 'Item removed successfully' }, status: :ok
+      end
+    end
+  end
+
+  def remove_item
+    @user = User.find(params[:user_id])
+    @order = @user.current_order
+  
+    ActiveRecord::Base.transaction do
+      if @order.nil?
+        render json: { error: 'No active order found' }, status: :unprocessable_entity
+        return
+      end
+      
+      @order_item = @order.order_items.find_by(item_id: order_item_params[:item_id])
+      
+      if @order_item.nil?
+        render json: { error: 'Item not found in the order' }, status: :unprocessable_entity
+        return
+      end
+  
+      unless @order_item.destroy
+        render json: { error: 'Failed to remove item from the order' }, status: :unprocessable_entity
+        raise ActiveRecord::Rollback
+      end
+  
+      @order.calculate_total_price
+  
+      unless @order.save
+        render json: { error: 'Failed to update order' }, status: :unprocessable_entity
+        raise ActiveRecord::Rollback
+      end
+  
+      render json: { message: 'Item removed successfully' }, status: :ok
+    end
+  end
+
+  def complete_order
+    @user = User.find(params[:user_id])
+    @order = @user.current_order || @user.create_order
+    @order.calculate_total_price
+    @order.complete_order
+    if @order.save
+      render json: @order, status: :ok
+    else
+      render json: @order.errors, status: :unprocessable_entity
+    end
+  end
+  
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_order
       @order = Order.find(params[:id])
     end
 
+    def set_user
+      @order = Order.find(params[:user_id])
+    end
+
     # Only allow a list of trusted parameters through.
     def order_params
       params.require(:order).permit(:user_id, :completed, :total_price, :items, :order_items)
+    end
+
+    def order_item_params
+      params.require(:order_item).permit(:item_id, :amount)
     end
 end

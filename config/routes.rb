@@ -10,7 +10,11 @@ Rails.application.routes.draw do
         end
         resources :orders, only: [:show] do
           collection do
-            post :fill_and_complete_order
+            post :complete_order
+            post :add_item
+            get :show_current_order
+            post :remove_one_item
+            post :remove_item
           end
         end
       end
