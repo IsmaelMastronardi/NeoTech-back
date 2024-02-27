@@ -4,8 +4,8 @@ class User < ApplicationRecord
 
   after_create :create_order
 
-  validates :name, presence: :true
-  
+  validates :name, presence: true
+
   def create_order
     Order.create(user: self)
   end

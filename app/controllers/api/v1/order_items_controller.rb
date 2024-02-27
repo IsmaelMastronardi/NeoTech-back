@@ -1,5 +1,5 @@
 class Api::V1::OrderItemsController < ApplicationController
-  before_action :set_order_item, only: %i[ show update destroy ]
+  before_action :set_order_item, only: %i[show update destroy]
 
   # GET /order_items
   def index
@@ -15,8 +15,11 @@ class Api::V1::OrderItemsController < ApplicationController
 
   # POST /order_items
   def create
+    puts order_item_params
+    @user = User.find(params[:user_id])
+    @order = @user.current_order || @user.create_order
     @order_item = OrderItem.new(order_item_params)
-
+    @order_item.order = @order
     if @order_item.save
       render json: @order_item, status: :created, location: @order_item
     else
@@ -39,13 +42,14 @@ class Api::V1::OrderItemsController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_order_item
-      @order_item = OrderItem.find(params[:id])
-    end
 
-    # Only allow a list of trusted parameters through.
-    def order_item_params
-      params.require(:order_item).permit(:quantity, :order_id, :item_id)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_order_item
+    @order_item = OrderItem.find(params[:id])
+  end
+
+  # Only allow a list of trusted parameters through.
+  def order_item_params
+    params.require(:order_item).permit(:item_id).merge(user_id: params[:user_id])
+  end
 end
