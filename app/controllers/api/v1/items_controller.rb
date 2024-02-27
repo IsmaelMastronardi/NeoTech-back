@@ -38,6 +38,8 @@ class Api::V1::ItemsController < ApplicationController
     @item.destroy!
   end
 
+  # GET /items/recentlyAdded
+
   def recentlyAdded
     @items = Item.last(10)
 

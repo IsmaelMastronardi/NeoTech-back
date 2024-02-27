@@ -15,6 +15,8 @@ class Api::V1::OrdersController < ApplicationController
     render json: @order
   end
 
+  # GET /orders/1/show_current_order
+
   def show_current_order
     @user = User.find(params[:user_id])
     @order = @user.current_order || @user.create_order
@@ -47,6 +49,8 @@ class Api::V1::OrdersController < ApplicationController
     @order.destroy!
   end
 
+  # POST /orders/add_item
+
   def add_item
     @user = User.find(params[:user_id])
 
@@ -73,6 +77,8 @@ class Api::V1::OrdersController < ApplicationController
       end
     end
   end
+
+  # POST /orders/remove_one_item
 
   def remove_one_item
     @user = User.find(params[:user_id])
@@ -109,6 +115,8 @@ class Api::V1::OrdersController < ApplicationController
     end
   end
 
+  # POST /orders/remove_item
+
   def remove_item
     @user = User.find(params[:user_id])
     @order = @user.current_order
@@ -141,6 +149,8 @@ class Api::V1::OrdersController < ApplicationController
       render json: { message: 'Item removed successfully' }, status: :ok
     end
   end
+
+  # POST /orders/complete_order
 
   def complete_order
     @user = User.find(params[:user_id])

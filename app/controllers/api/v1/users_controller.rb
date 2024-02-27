@@ -28,6 +28,8 @@ class Api::V1::UsersController < ApplicationController
     end
   end
 
+  # POST /users/create_temporary_user
+
   def create_temporary_user
     @user = User.create(name: 'Guest')
     if @user.save
