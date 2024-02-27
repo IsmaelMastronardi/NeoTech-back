@@ -67,8 +67,6 @@ class Api::V1::OrdersController < ApplicationController
       @order.save
       @order.calculate_total_price
       @order.save
-
-
       if @order_item.save
         render json: @order_item, status: :created
       else

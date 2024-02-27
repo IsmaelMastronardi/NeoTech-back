@@ -38,9 +38,9 @@ class Api::V1::ItemsController < ApplicationController
     @item.destroy!
   end
 
-  # GET /items/recentlyAdded
+  # GET /items/recently_added
 
-  def recentlyAdded
+  def recently_added
     @items = Item.last(10)
 
     render json: @items
