@@ -1,7 +1,7 @@
-
 class Api::V1::OrdersController < ApplicationController
   before_action :set_order, only: %i[update destroy]
-  before_action :set_user, only: %i[show show_current_order show_past_orders add_item remove_one_item remove_item complete_order]
+  before_action :set_user,
+                only: %i[show show_current_order show_past_orders add_item remove_one_item remove_item complete_order]
 
   # GET /orders
   def index

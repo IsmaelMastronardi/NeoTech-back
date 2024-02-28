@@ -1,4 +1,3 @@
-
 class Api::V1::CategoriesController < ApplicationController
   before_action :set_category, only: %i[show update destroy]
 

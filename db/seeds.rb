@@ -86,20 +86,6 @@ PRODUCT_CATEGORIES = {
   ],  
 }
 
-# categories.each do |category|
-#   current_category = Category.create(name: category)
-#   imagesArray[category].each do |item|
-#     Item.create(
-#       name: "#{[category]} #{}",
-#       description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus malesuada dui a magna porta, faucibus sagittis odio scelerisque. Phasellus tincidunt enim quis erat tincidunt porta. Nullam sit amet quam rutrum nibh lobortis gravida quis mollis nisl. Nulla ante dolor, suscipit ut tortor nec, interdum dictum turpis',
-#       price: Faker::Commerce.price(range: 50.0..1000.0),
-#       quantity: rand(1..10),
-#       category: current_category,
-#       image: image
-#     )
-#   end
-# end
-
 PRODUCT_CATEGORIES.each do |category, items|
   current_category = Category.create(name: category)
   items.each do |item|
