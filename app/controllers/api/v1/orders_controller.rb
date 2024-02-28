@@ -1,6 +1,7 @@
+
 class Api::V1::OrdersController < ApplicationController
   before_action :set_order, only: %i[update destroy]
-  before_action :set_user, only: %i[show]
+  before_action :set_user, only: %i[show show_current_order show_past_orders add_item remove_one_item remove_item complete_order]
 
   # GET /orders
   def index
@@ -18,10 +19,17 @@ class Api::V1::OrdersController < ApplicationController
   # GET /orders/1/show_current_order
 
   def show_current_order
-    @user = User.find(params[:user_id])
+    puts @user
     @order = @user.current_order || @user.create_order
     @order.save
     render json: @order, include: { order_items: { include: :item } }
+  end
+
+  # GET /users/1/show_past_orders
+
+  def show_past_orders
+    past_orders = @user.past_orders.includes(order_items: :item)
+    render json: past_orders.to_json(include: { order_items: { include: :item } })
   end
 
   # POST /orders
@@ -52,8 +60,6 @@ class Api::V1::OrdersController < ApplicationController
   # POST /orders/add_item
 
   def add_item
-    @user = User.find(params[:user_id])
-
     ActiveRecord::Base.transaction do
       @order = @user.current_order || @user.create_order
       @item = Item.find(order_item_params[:item_id])
@@ -76,10 +82,9 @@ class Api::V1::OrdersController < ApplicationController
     end
   end
 
-  # POST /orders/remove_one_item
+  # DELETE /orders/remove_one_item
 
   def remove_one_item
-    @user = User.find(params[:user_id])
     @order = @user.current_order
     ActiveRecord::Base.transaction do
       if @order.nil?
@@ -113,10 +118,9 @@ class Api::V1::OrdersController < ApplicationController
     end
   end
 
-  # POST /orders/remove_item
+  # DELETE /orders/remove_item
 
   def remove_item
-    @user = User.find(params[:user_id])
     @order = @user.current_order
 
     ActiveRecord::Base.transaction do
@@ -151,7 +155,6 @@ class Api::V1::OrdersController < ApplicationController
   # POST /orders/complete_order
 
   def complete_order
-    @user = User.find(params[:user_id])
     @order = @user.current_order || @user.create_order
     @order.calculate_total_price
     @order.complete_order
@@ -170,7 +173,7 @@ class Api::V1::OrdersController < ApplicationController
   end
 
   def set_user
-    @order = Order.find(params[:user_id])
+    @user = User.find(params[:user_id])
   end
 
   # Only allow a list of trusted parameters through.
