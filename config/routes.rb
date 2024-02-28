@@ -1,27 +1,28 @@
+
 Rails.application.routes.draw do
+  mount Rswag::Ui::Engine => '/api-docs'
+  mount Rswag::Api::Engine => '/api-docs'
   namespace :api do
     namespace :v1 do
       resources :users, only: [:show] do
-        member do
-          get :show_past_orders
-        end
         collection do
-          post :create_temporary_user
+          post :create_guest_user
         end
         resources :orders, only: [:show] do
           collection do
             post :complete_order
             post :add_item
             get :show_current_order
-            post :remove_one_item
-            post :remove_item
+            get :show_past_orders
+            delete :remove_one_item
+            delete :remove_item
           end
         end
       end
       resources :categories, only: [:index, :show]
       resources :items do
         collection do
-          get :recently_Added
+          get :recently_added
         end
       end
     end

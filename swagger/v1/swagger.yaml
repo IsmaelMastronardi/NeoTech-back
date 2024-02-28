@@ -1,0 +1,403 @@
+openapi: 3.0.3
+info:
+  title: Neotech API
+  version: 1.0.0
+paths:
+  /api/v1/users/{id}:
+    get:
+      summary: Retrieves a user by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+      produces:
+        - application/json
+      responses:
+        200:
+          description: User found
+          schema:
+            $ref: '#/definitions/User'
+        404:
+          description: User not found
+
+  /api/v1/users/create_guest_user:
+    post:
+      summary: Creates a guest user
+      produces:
+        - application/json
+      responses:
+        201:
+          description: guest user created
+          schema:
+            $ref: '#/definitions/User'
+        422:
+          description: Invalid parameters
+
+  /api/v1/users/{user_id}/orders/show_current_order:
+    get:
+      summary: Retrieves the current order for the user
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          type: integer
+      produces:
+        - application/json
+      responses:
+        200:
+          description: Current order found
+          schema:
+            $ref: '#/definitions/Order'
+        404:
+          description: Current order not found
+
+  /api/v1/users/{user_id}/orders/show_past_orders:
+    get:
+      summary: Retrieves past orders for the user
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          type: integer
+      produces:
+        - application/json
+      responses:
+        200:
+          description: Past orders found
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Order'
+        404:
+          description: Past orders not found
+
+  /api/v1/users/{user_id}/orders/add_item:
+    post:
+      summary: Adds an item to the current order for the user
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          type: integer
+        - name: order_item
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/OrderItem'
+      produces:
+        - application/json
+      responses:
+        201:
+          description: Item added to the order
+          schema:
+            $ref: '#/definitions/OrderItem'
+        422:
+          description: Invalid parameters
+
+  /api/v1/users/{user_id}/orders/remove_one_item:
+    delete:
+      summary: Removes one quantity of an item from the current order for the user
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          type: integer
+        - name: order_item
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/OrderItem'
+      produces:
+        - application/json
+      responses:
+        200:
+          description: Item quantity reduced in the order
+          schema:
+            $ref: '#/definitions/OrderItem'
+        422:
+          description: Invalid parameters
+
+  /api/v1/users/{user_id}/orders/remove_item:
+    delete:
+      summary: Removes an item from the current order for the user
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          type: integer
+        - name: order_item
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/OrderItem'
+      produces:
+        - application/json
+      responses:
+        200:
+          description: Item removed from the order
+          schema:
+            $ref: '#/definitions/OrderItem'
+        422:
+          description: Invalid parameters
+
+  /api/v1/users/{user_id}/orders/complete_order:
+    post:
+      summary: Completes the current order for the user
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          type: integer
+      produces:
+        - application/json
+      responses:
+        200:
+          description: Order completed successfully
+          schema:
+            $ref: '#/definitions/Order'
+        422:
+          description: Order completion failed
+
+  /api/v1/categories:
+    get:
+      summary: Retrieves a list of categories
+      produces:
+        - application/json
+      responses:
+        200:
+          description: Categories found
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Category'
+
+  /api/v1/categories/{id}:
+    get:
+      summary: Retrieves items for the category by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+      produces:
+        - application/json
+      responses:
+        200:
+          description: Items for the category found
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Item'
+        404:
+          description: Category not found
+
+  /api/v1/items:
+    get:
+      summary: Retrieves a list of items
+      produces:
+        - application/json
+      responses:
+        200:
+          description: Items found
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Item'
+
+    post:
+      summary: Creates a new item
+      parameters:
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Item'
+      produces:
+        - application/json
+      responses:
+        201:
+          description: Item created
+          schema:
+            $ref: '#/definitions/Item'
+        422:
+          description: Invalid parameters
+
+  /api/v1/items/{id}:
+    get:
+      summary: Retrieves an item by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+      produces:
+        - application/json
+      responses:
+        200:
+          description: Item found
+          schema:
+            $ref: '#/definitions/Item'
+        404:
+          description: Item not found
+
+    patch:
+      summary: Updates an item by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Item'
+      produces:
+        - application/json
+      responses:
+        200:
+          description: Item updated
+          schema:
+            $ref: '#/definitions/Item'
+        422:
+          description: Invalid parameters
+
+    delete:
+      summary: Deletes an item by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+      produces:
+        - application/json
+      responses:
+        204:
+          description: Item deleted
+        404:
+          description: Item not found
+
+  /api/v1/items/recently_added:
+    get:
+      summary: Retrieves recently added items
+      produces:
+        - application/json
+      responses:
+        200:
+          description: Recently added items found
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Item'
+        404:
+          description: No recently added items found
+
+definitions:
+  User:
+    type: object
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      created_at:
+        type: string
+        format: date-time
+      updated_at:
+        type: string
+        format: date-time
+    required:
+      - id
+      - name
+      - created_at
+      - updated_at
+  Order:
+    type: object
+    properties:
+      id:
+        type: integer
+      user_id:
+        type: integer
+      total_price:
+        type: number
+        format: float
+      completed:
+        type: boolean
+      created_at:
+        type: string
+        format: date-time
+      updated_at:
+        type: string
+        format: date-time
+    required:
+      - id
+      - user_id
+      - total_price
+      - completed
+      - created_at
+      - updated_at
+
+    OrderItem:
+      type: object
+      properties:
+        item_id:
+          type: integer
+        quantity:
+          type: integer
+      required:
+        - item_id
+        - quantity
+  Category:
+    type: object
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      created_at:
+        type: string
+        format: date-time
+      updated_at:
+        type: string
+        format: date-time
+    required:
+      - id
+      - name
+      - created_at
+      - updated_at
+
+  Item:
+    type: object
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      description:
+        type: string
+      price:
+        type: number
+        format: float
+      image:
+        type: string
+      quantity:
+        type: integer
+      category_id:
+        type: integer
+      created_at:
+        type: string
+        format: date-time
+      updated_at:
+        type: string
+        format: date-time
+    required:
+      - id
+      - name
+      - description
+      - price
+      - image
+      - quantity
+      - category_id
+      - created_at
+      - updated_at
